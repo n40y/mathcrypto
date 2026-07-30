@@ -1,5 +1,9 @@
-﻿nimcache/
+nimcache/
 *.exe
 *.out
 nimble.paths
 *.paths
+
+# Generated Documentation
+htmldocs/
+src/htmldocs/
