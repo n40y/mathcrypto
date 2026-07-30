@@ -4,6 +4,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Nimble Package](https://img.shields.io/badge/Nimble-mathcrypto-informational.svg)](https://github.com/n40y/mathcrypto)
 
+## Description
+
+A lightweight, efficient, and dependency-free Nim library providing core mathematical and cryptographic utilities, including modular arithmetic, Jacobi symbol computation, and robust primality testing algorithms.
+
 ---
 
 ## Features
