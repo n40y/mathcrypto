@@ -125,4 +125,8 @@ All test files located under *tests/* (*t_jacobi.nim*, *t_primality.nim*) will b
 
 ## License
 
+<<<<<<< HEAD
 This project is licensed under the MIT License. See the LICENSE file for details.
+=======
+This project is licensed under the MIT License. See the LICENSE file for details.
+>>>>>>> af6dd18 (Add runnableExamples and htmldocs exclusion)

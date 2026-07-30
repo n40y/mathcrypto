@@ -1,38 +1,44 @@
 ## src/mathcrypto/jacobi.nim
 
-#[
-Calcule le symbole de Jacobi (a / n)
-Si n est un nombre premier, cela correspond au symbole de Legendre.
-    
-Préconditions:
-    - n doit être un entier impair strictement positif (n >= 3, n % 2 != 0).
-]#
-
 proc jacobi_symbol*(a: int, n: int): int =
-    var a = a
-    var n = n
+  ## Calculates the Jacobi symbol `(a / n)`.
+  ##
+  ## `n` must be a positive odd integer (`n > 0` and `n mod 2 != 0`).
+  ##
+  ## Returns:
+  ## - `1` if `a` is a quadratic residue modulo `n`
+  ## - `-1` if `a` is a quadratic non-residue modulo `n`
+  ## - `0` if `gcd(a, n) > 1`
+  ##
+  ## runnableExamples:
+  ##   doAssert jacobi_symbol(2, 7) == 1
+  ##   doAssert jacobi_symbol(7, 11) == -1
+  ##   doAssert jacobi_symbol(10, 15) == 0
+  if n <= 0 or n mod 2 == 0:
+    raise newException(ValueError, "n must be a positive odd integer")
 
-    if n <= 0 or (n and 1) == 0:
-        raise newException(ValueError, "n must be positive odd integer.")
+  var aVal = a mod n
+  if aVal < 0:
+    aVal += n
 
-    a = a mod n
-    var res = 1
+  var nVal = n
+  var resultVal = 1
 
-    while a != 0:
-        while (a and 1) == 0:
-            a = a shr 1
-            let nMod8 = n mod 8
-            if nMod8 == 3 or nMod8 == 5:
-                res = -res
+  while aVal != 0:
+    while aVal mod 2 == 0:
+      aVal = aVal div 2
+      let nMod8 = nVal mod 8
+      if nMod8 == 3 or nMod8 == 5:
+        resultVal = -resultVal
 
-        if (a mod 4 == 3) and (n mod 4 == 3):
-            res = -res
+    swap(aVal, nVal)
 
-        let temp = a
-        a = n mod a
-        n = temp
-  
-    if n == 1:
-        return res
+    if aVal mod 4 == 3 and nVal mod 4 == 3:
+      resultVal = -resultVal
 
+    aVal = aVal mod nVal
+
+  if nVal == 1:
+    return resultVal
+  else:
     return 0
