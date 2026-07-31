@@ -102,7 +102,7 @@ echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 
 # **_mathcrypto/jacobi_**
 
-_proc jacobi_symbol*(a: int, n: int): int_
+_proc jacobi_symbol*(a: int, n: int): int_ \
 Calculates the Jacobi symbol **_(a / n)_**.
 
 * Precondition: **n** must be a positive odd integer (**n > 0**, **n = 1 (mod 2)**).
@@ -114,28 +114,28 @@ Calculates the Jacobi symbol **_(a / n)_**.
 
 # **_mathcrypto/primality_**
 
-_proc powerMod*(base, exp, m: uint64): uint64_
+_proc powerMod*(base, exp, m: uint64): uint64_ \
 Computes **(base^{exp}) (mod m)** using binary exponentiation.
 
 
-_proc isPrimeMillerRabin*(n: uint64): bool_
+_proc isPrimeMillerRabin*(n: uint64): bool_ \
 Determines if **n** is prime using the Miller-Rabin algorithm.
 
 * Deterministic for all **uint64** values by testing against bases **_[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_**.
 
-_proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_
+_proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_ \
 Determines if **n** is prime using **k** iterations of the Solovay-Strassen probabilistic test.
 
 
 # **_mathcrypto/gf2_**
 
-_func polyMulZ2(a, b: uint): uint*_
+_func polyMulZ2(a, b: uint): uint*_ \
 Multiplies two polynomials **A(X)** and **B(X)** over **Z₂[X]**.
 
-_func polyModZ2(r: uint, m: uint = 0x11B): uint*_
+_func polyModZ2(r: uint, m: uint = 0x11B): uint*_ \
 Reduces polynomial **r** modulo **m** over **Z₂[X]** (defaults to **0x11B**, the AES irreducible polynomial).
 
-_func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_
+_func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_ \
 Multiplies two elements in the finite field **(2⁸)** modulo the irreducible polynomial **m**.
 
 
