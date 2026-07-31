@@ -105,38 +105,38 @@ echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 _proc jacobi_symbol*(a: int, n: int): int_
 Calculates the Jacobi symbol **_(a / n)_**.
 
-* Precondition: **_n_** must be a positive odd integer (**_n > 0_**, **_n = 1 (mod 2)_**).
+* Precondition: **n** must be a positive odd integer (**n > 0**, **n = 1 (mod 2)**).
 
-* Returns: **_1_**, **_-1_**, or **_0_**.
+* Returns: **1**, **-1**, or **0**.
 
-* Raises: *ValueError* if **_n_** is even or non-positive.
+* Raises: *ValueError* if **n** is even or non-positive.
 
 
 # **_mathcrypto/primality_**
 
 _proc powerMod*(base, exp, m: uint64): uint64_
-Computes **_(base^{exp}) (mod m)_** using binary exponentiation.
+Computes **(base^{exp}) (mod m)** using binary exponentiation.
 
 
 _proc isPrimeMillerRabin*(n: uint64): bool_
-Determines if **_n_** is prime using the Miller-Rabin algorithm.
+Determines if **n** is prime using the Miller-Rabin algorithm.
 
-* Deterministic for all **_uint64_** values by testing against bases _[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_.
+* Deterministic for all **uint64** values by testing against bases _[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_.
 
 _proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_
-Determines if *n* is prime using $k$ iterations of the Solovay-Strassen probabilistic test.
+Determines if **n** is prime using **k** iterations of the Solovay-Strassen probabilistic test.
 
 
 # **_mathcrypto/gf2_**
 
 _func polyMulZ2(a, b: uint): uint*_
-Multiplies two polynomials _A(X)_ and _B(X)_ over _Z₂[X]_.
+Multiplies two polynomials **A(X)** and **B(X)** over **Z₂[X]**.
 
 _func polyModZ2(r: uint, m: uint = 0x11B): uint*_
-Reduces polynomial _r_ modulo _m_ over _Z₂[X]_ (defaults to **_0x11B_**, the AES irreducible polynomial).
+Reduces polynomial **r** modulo **m** over **Z₂[X]** (defaults to **0x11B**, the AES irreducible polynomial).
 
 _func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_
-Multiplies two elements in the finite field _(2⁸)_ modulo the irreducible polynomial _m_.
+Multiplies two elements in the finite field **(2⁸)** modulo the irreducible polynomial **m**.
 
 
 ## Running Tests
