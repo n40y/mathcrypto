@@ -12,11 +12,11 @@ A lightweight, efficient, and dependency-free Nim library providing core mathema
 
 ## Features
 
-- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of *(a / n)* using bitwise optimizations.
+- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of _(a / n)_ using bitwise optimizations.
 - **Miller-Rabin Primality Test (`isPrimeMillerRabin`)**: **Deterministic** primality verification for all 64-bit integers (`uint64`) using known minimal deterministic bases.
 - **Solovay-Strassen Primality Test (`isPrimeSolovayStrassen`)**: Probabilistic primality test based on Euler's criterion and the Jacobi symbol.
-- **Modular Exponentiation (`powerMod`)**: Efficient *O(log e)* modular exponentiation for 64-bit unsigned integers.
-- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in *GF(2^8)* / AES (`gf28Mul`).
+- **Modular Exponentiation (`powerMod`)**: Efficient _O(log e)_ modular exponentiation for 64-bit unsigned integers.
+- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in _GF(2⁸)_ / AES (`gf28Mul`).
 - **Zero External Dependencies**: Pure Nim stdlib implementation (`std/bitops`, `std/random`, `std/unittest`).
 - **Nimble Ready**: Fully compliant with Nimble package layout standards.
 
@@ -64,7 +64,7 @@ nimble develop
 
 ## Usage
 
-Import *mathcrypto* to access all cryptographic and mathematical procedures in your project:
+Import *_mathcrypto_* to access all cryptographic and mathematical procedures in your project:
 
 ```python
 import mathcrypto
@@ -100,43 +100,43 @@ echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 ## API Reference
 
 
-# *mathcrypto/jacobi*
+# **_mathcrypto/jacobi_**
 
-**proc jacobi_symbol*(a: int, n: int): int**
-Calculates the Jacobi symbol *(a / n)*.
+_proc jacobi_symbol*(a: int, n: int): int_
+Calculates the Jacobi symbol **_(a / n)_**.
 
-* Precondition: *n* must be a positive odd integer (*n > 0*, *n = 1 (mod 2)*).
+* Precondition: **_n_** must be a positive odd integer (**_n > 0_**, **_n = 1 (mod 2)_**).
 
-* Returns: *1*, *-1*, or *0*.
+* Returns: **_1_**, **_-1_**, or **_0_**.
 
-* Raises: *ValueError* if *n* is even or non-positive.
-
-
-# *mathcrypto/primality*
-
-**proc powerMod*(base, exp, m: uint64): uint64**
-Computes *(base^{exp}) (mod m)* using binary exponentiation.
+* Raises: *ValueError* if **_n_** is even or non-positive.
 
 
-**proc isPrimeMillerRabin*(n: uint64): bool**
-Determines if *n* is prime using the Miller-Rabin algorithm.
+# **_mathcrypto/primality_**
 
-* Deterministic for all *uint64* values by testing against bases *[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]*.
+_proc powerMod*(base, exp, m: uint64): uint64_
+Computes **_(base^{exp}) (mod m)_** using binary exponentiation.
 
-**proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool**
+
+_proc isPrimeMillerRabin*(n: uint64): bool_
+Determines if **_n_** is prime using the Miller-Rabin algorithm.
+
+* Deterministic for all **_uint64_** values by testing against bases _[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_.
+
+_proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_
 Determines if *n* is prime using $k$ iterations of the Solovay-Strassen probabilistic test.
 
 
-# *mathcrypto/gf2*
+# **_mathcrypto/gf2_**
 
-**func polyMulZ2(a, b: uint): uint***
-Multiplies two polynomials $A(X)$ and $B(X)$ over $\mathbb{Z}_2[X]$.
+_func polyMulZ2(a, b: uint): uint*_
+Multiplies two polynomials _A(X)_ and _B(X)_ over _Z₂[X]_.
 
-**func polyModZ2(r: uint, m: uint = 0x11B): uint***
-Reduces polynomial $r$ modulo $m$ over $\mathbb{Z}_2[X]$ (defaults to 0x11B=, the AES irreducible polynomial).
+_func polyModZ2(r: uint, m: uint = 0x11B): uint*_
+Reduces polynomial _r_ modulo _m_ over _Z₂[X]_ (defaults to **_0x11B_**, the AES irreducible polynomial).
 
-**func gf28Mul(a, b: uint, m: uint = 0x11B): uint***
-Multiplies two elements in the finite field $GF(2^8)$ modulo the irreducible polynomial $m$.
+_func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_
+Multiplies two elements in the finite field _(2⁸)_ modulo the irreducible polynomial _m_.
 
 
 ## Running Tests
@@ -146,7 +146,7 @@ Execute the full suite of unit tests using Nimble:
 nimble test
 ```
 
-All test files located under *tests/* (*t_jacobi.nim*, *t_primality.nim*) will be automatically compiled and executed.
+All test files located under *_tests/_* (*_t_jacobi.nim_*, *_t_primality.nim_*) will be automatically compiled and executed.
 
 
 ## License
