@@ -121,7 +121,7 @@ Computes **(base^{exp}) (mod m)** using binary exponentiation.
 _proc isPrimeMillerRabin*(n: uint64): bool_
 Determines if **n** is prime using the Miller-Rabin algorithm.
 
-* Deterministic for all **uint64** values by testing against bases _[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_.
+* Deterministic for all **uint64** values by testing against bases **_[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_**.
 
 _proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_
 Determines if **n** is prime using **k** iterations of the Solovay-Strassen probabilistic test.
