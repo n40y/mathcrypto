@@ -12,11 +12,11 @@ A lightweight, efficient, and dependency-free Nim library providing core mathema
 
 ## Features
 
-- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of $(a / n)$ using bitwise optimizations.
+- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of *(a / n)* using bitwise optimizations.
 - **Miller-Rabin Primality Test (`isPrimeMillerRabin`)**: **Deterministic** primality verification for all 64-bit integers (`uint64`) using known minimal deterministic bases.
 - **Solovay-Strassen Primality Test (`isPrimeSolovayStrassen`)**: Probabilistic primality test based on Euler's criterion and the Jacobi symbol.
-- **Modular Exponentiation (`powerMod`)**: Efficient $O(\log e)$ modular exponentiation for 64-bit unsigned integers.
-- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in $GF(2^8)$ / AES (`gf28Mul`).
+- **Modular Exponentiation (`powerMod`)**: Efficient *O(log e)* modular exponentiation for 64-bit unsigned integers.
+- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in *GF(2^8)* / AES (`gf28Mul`).
 - **Zero External Dependencies**: Pure Nim stdlib implementation (`std/bitops`, `std/random`, `std/unittest`).
 - **Nimble Ready**: Fully compliant with Nimble package layout standards.
 
@@ -103,9 +103,9 @@ echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 # *mathcrypto/jacobi*
 
 **proc jacobi_symbol*(a: int, n: int): int**
-Calculates the Jacobi symbol $(a / n)$.
+Calculates the Jacobi symbol *(a / n)*.
 
-* Precondition: *n* must be a positive odd integer ($n > 0$, $n \equiv 1 \pmod 2$).
+* Precondition: *n* must be a positive odd integer (*n > 0*, *n = 1 (mod 2)*).
 
 * Returns: *1*, *-1*, or *0*.
 
@@ -115,7 +115,7 @@ Calculates the Jacobi symbol $(a / n)$.
 # *mathcrypto/primality*
 
 **proc powerMod*(base, exp, m: uint64): uint64**
-Computes $(base^{exp}) \pmod m$ using binary exponentiation.
+Computes *(base^{exp}) (mod m)* using binary exponentiation.
 
 
 **proc isPrimeMillerRabin*(n: uint64): bool**
@@ -133,7 +133,7 @@ Determines if *n* is prime using $k$ iterations of the Solovay-Strassen probabil
 Multiplies two polynomials $A(X)$ and $B(X)$ over $\mathbb{Z}_2[X]$.
 
 **func polyModZ2(r: uint, m: uint = 0x11B): uint***
-Reduces polynomial $r$ modulo $m$ over $\mathbb{Z}_2[X]$ (defaults to ==0x11B==, the AES irreducible polynomial).
+Reduces polynomial $r$ modulo $m$ over $\mathbb{Z}_2[X]$ (defaults to 0x11B=, the AES irreducible polynomial).
 
 **func gf28Mul(a, b: uint, m: uint = 0x11B): uint***
 Multiplies two elements in the finite field $GF(2^8)$ modulo the irreducible polynomial $m$.
