@@ -16,7 +16,8 @@ A lightweight, efficient, and dependency-free Nim library providing core mathema
 - **Miller-Rabin Primality Test (`isPrimeMillerRabin`)**: **Deterministic** primality verification for all 64-bit integers (`uint64`) using known minimal deterministic bases.
 - **Solovay-Strassen Primality Test (`isPrimeSolovayStrassen`)**: Probabilistic primality test based on Euler's criterion and the Jacobi symbol.
 - **Modular Exponentiation (`powerMod`)**: Efficient $O(\log e)$ modular exponentiation for 64-bit unsigned integers.
-- **Zero External Dependencies**: Pure Nim stdlib implementation (`std/random`, `std/unittest`).
+- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in $GF(2^8)$ / AES (`gf28Mul`).
+- **Zero External Dependencies**: Pure Nim stdlib implementation (`std/bitops`, `std/random`, `std/unittest`).
 - **Nimble Ready**: Fully compliant with Nimble package layout standards.
 
 ---
@@ -28,6 +29,7 @@ mathcrypto/
 ├── src/
 │   ├── mathcrypto.nim        # Main export module
 │   └── mathcrypto/
+│       ├── gf2.nim           # Polynomial arithmetic over Z₂[X] & GF(2⁸)
 │       ├── jacobi.nim        # Jacobi symbol algorithm
 │       └── primality.nim     # PowerMod, Miller-Rabin, & Solovay-Strassen
 ├── tests/
@@ -59,12 +61,14 @@ cd mathcrypto
 nimble develop
 ```
 
+
 ## Usage
 
 Import *mathcrypto* to access all cryptographic and mathematical procedures in your project:
 
 ```python
 import mathcrypto
+import std/strutils
 
 # 1. Compute Jacobi Symbol (a / n)
 let j1 = jacobi_symbol(2, 7)    # Returns  1 (2 is a quadratic residue mod 7)
@@ -83,12 +87,21 @@ echo "Is 561 prime? ", p2
 # 3. Probabilistic Primality Testing with Solovay-Strassen
 let p3 = isPrimeSolovayStrassen(104729, k = 20) # Returns true
 echo "Solovay-Strassen (104729): ", p3
+
+# 4. Binary Polynomials & GF(2⁸) Arithmetic
+let prod = polyMulZ2(7, 3)     # (X² + X + 1) * (X + 1) = X³ + 1 -> 9
+let rem  = polyModZ2(9, 11)    # 9 mod (X³ + X + 1) -> 2
+let gf   = gf28Mul(0x57, 0x83) # AES multiplication -> 0xC1
+
+echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 ```
 
 
 ## API Reference
 
-*mathcrypto/jacobi*
+
+# *mathcrypto/jacobi*
+
 **proc jacobi_symbol*(a: int, n: int): int**
 Calculates the Jacobi symbol $(a / n)$.
 
@@ -99,7 +112,8 @@ Calculates the Jacobi symbol $(a / n)$.
 * Raises: *ValueError* if *n* is even or non-positive.
 
 
-*mathcrypto/primality*
+# *mathcrypto/primality*
+
 **proc powerMod*(base, exp, m: uint64): uint64**
 Computes $(base^{exp}) \pmod m$ using binary exponentiation.
 
@@ -111,6 +125,18 @@ Determines if *n* is prime using the Miller-Rabin algorithm.
 
 **proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool**
 Determines if *n* is prime using $k$ iterations of the Solovay-Strassen probabilistic test.
+
+
+# *mathcrypto/gf2*
+
+**func polyMulZ2(a, b: uint): uint***
+Multiplies two polynomials $A(X)$ and $B(X)$ over $\mathbb{Z}_2[X]$.
+
+**func polyModZ2(r: uint, m: uint = 0x11B): uint***
+Reduces polynomial $r$ modulo $m$ over $\mathbb{Z}_2[X]$ (defaults to ==0x11B==, the AES irreducible polynomial).
+
+**func gf28Mul(a, b: uint, m: uint = 0x11B): uint***
+Multiplies two elements in the finite field $GF(2^8)$ modulo the irreducible polynomial $m$.
 
 
 ## Running Tests
@@ -125,6 +151,4 @@ All test files located under *tests/* (*t_jacobi.nim*, *t_primality.nim*) will b
 
 ## License
 
-
 This project is licensed under the MIT License. See the LICENSE file for details.
-
