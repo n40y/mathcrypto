@@ -21,13 +21,14 @@ func polyMulZ2*(a, b: uint): uint {.inline.} =
     ##
     ## Polynomials are represented as integers where bit `i`
     ## corresponds to the coefficient of `X^i`.
-    ##
+    ## \
     ## runnableExamples:
-    ##   (X² + X + 1) * (X + 1) = X³ + 1
-    ##   - doAssert polyMulZ2(7, 3) == 9
     ##
-    ##   (X² + 1) * (X² + 1) = X⁴ + 1  (since 2X² = 0 mod 2)
-    ##   - doAssert polyMulZ2(5, 5) == 17
+    ##    (X² + X + 1) * (X + 1) = X³ + 1
+    ##    - doAssert polyMulZ2(7, 3) == 9
+    ##
+    ##    (X² + 1) * (X² + 1) = X⁴ + 1  (since 2X² = 0 mod 2)
+    ##    - doAssert polyMulZ2(5, 5) == 17
     var a = a
     var b = b
     while b > 0:
@@ -43,10 +44,9 @@ func polyModZ2*(r: uint, m: uint = 0x11B): uint {.inline.} =
     ## Defaults to `m = 0x11B` (`X^8 + X^4 + X^3 + X + 1`, the AES irreducible polynomial).
     ##
     ## runnableExamples:
-    ##
-    ##   import std/bitops
-    ##   # (X³ + 1) mod (X³ + X + 1) => 9 mod 11 = 2 (polynomial X)
-    ##   - doAssert polyModZ2(9, 11) == 2
+    ##    (X³ + 1) mod (X³ + X + 1) => 9 mod 11 = 2 (polynomial X)
+    ##    import std/bitops
+    ##    - doAssert polyModZ2(9, 11) == 2
     var r = r
     while r.bitLen >= m.bitLen:
         let k = r.bitLen - m.bitLen
@@ -58,7 +58,6 @@ func gf28Mul*(a, b: uint, m: uint = 0x11B): uint {.inline.} =
     ## modulo the irreducible polynomial `m` (0x11B by default for AES).
     ##
     ## runnableExamples:
-    ##
-    ##   # Multiply 0x57 by 0x83 in GF(2⁸) with AES polynomial (expected result: 0xC1)
+    ##   Multiply 0x57 by 0x83 in GF(2⁸) with AES polynomial (expected result: 0xC1)
     ##   - doAssert gf28Mul(0x57, 0x83) == 0xC1
     return polyModZ2(polyMulZ2(a, b), m)
