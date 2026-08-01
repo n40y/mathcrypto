@@ -1,4 +1,4 @@
-# src/mathcrypto
+# src/mathcrypto/gf2.nim
 
 import std/bitops
 
