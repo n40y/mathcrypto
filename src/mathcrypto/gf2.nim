@@ -25,7 +25,6 @@ func polyMulZ2*(a, b: uint): uint {.inline.} =
     runnableExamples:
         # (X² + X + 1) * (X + 1) = X³ + 1
         assert polyMulZ2(7, 3) == 9
-    ##
         # (X² + 1) * (X² + 1) = X⁴ + 1  (since 2X² = 0 mod 2)
         assert polyMulZ2(5, 5) == 17
     
