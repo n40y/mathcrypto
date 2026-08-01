@@ -7,8 +7,8 @@ proc powerMod*(base, exp, m: uint64): uint64 =
   ## Computes `(base^exp) mod m` using binary exponentiation.
   ##
   ## runnableExamples:
-  ##   doAssert powerMod(2'u64, 10'u64, 1000'u64) == 24'u64
-  ##   doAssert powerMod(5'u64, 3'u64, 13'u64) == 8'u64
+  ##   - doAssert powerMod(2'u64, 10'u64, 1000'u64) == 24'u64
+  ##   - doAssert powerMod(5'u64, 3'u64, 13'u64) == 8'u64
   var res = 1'u64
   var b = base mod m
   var e = exp
@@ -25,9 +25,9 @@ proc isPrimeMillerRabin*(n: uint64): bool =
   ## Deterministic for all 64-bit unsigned integers (`uint64`).
   ##
   ## runnableExamples:
-  ##   doAssert isPrimeMillerRabin(2'u64) == true
-  ##   doAssert isPrimeMillerRabin(104729'u64) == true
-  ##   doAssert isPrimeMillerRabin(561'u64) == false
+  ##   - doAssert isPrimeMillerRabin(2'u64) == true
+  ##   - doAssert isPrimeMillerRabin(104729'u64) == true
+  ##   - doAssert isPrimeMillerRabin(561'u64) == false
   if n < 2'u64: return false
   if n == 2'u64 or n == 3'u64: return true
   if n mod 2'u64 == 0'u64: return false
@@ -62,8 +62,8 @@ proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool =
   ## Probabilistic test based on Euler's criterion and the Jacobi symbol.
   ##
   ## runnableExamples:
-  ##   doAssert isPrimeSolovayStrassen(104729, k = 20) == true
-  ##   doAssert isPrimeSolovayStrassen(561, k = 20) == false
+  ##   - doAssert isPrimeSolovayStrassen(104729, k = 20) == true
+  ##   - doAssert isPrimeSolovayStrassen(561, k = 20) == false
   if n < 2: return false
   if n == 2: return true
   if n mod 2 == 0: return false
