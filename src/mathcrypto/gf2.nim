@@ -17,10 +17,10 @@ func bitLen*(n: uint): int {.inline.} =
 # =====================================================================
 
 func polyMulZ2*(a, b: uint): uint {.inline.} =
-    ## Multiplies two polynomials $A(X)$ and $B(X)$ over $\mathbb{Z}_2[X]$.
+    ## Multiplies two polynomials **A(X)** and **B(X)** over **{Z}_2[X]**.
     ##
     ## Polynomials are represented as integers where bit `i`
-    ## corresponds to the coefficient of $X^i$.
+    ## corresponds to the coefficient of **X^i**.
     ##
     ## runnableExamples:
     ##   # (X² + X + 1) * (X + 1) = X³ + 1
@@ -39,8 +39,8 @@ func polyMulZ2*(a, b: uint): uint {.inline.} =
 
 
 func polyModZ2*(r: uint, m: uint = 0x11B): uint {.inline.} =
-    ## Reduces polynomial `r` modulo `m` over $\mathbb{Z}_2[X]$.
-    ## Defaults to `m = 0x11B` ($X^8 + X^4 + X^3 + X + 1$, the AES irreducible polynomial).
+    ## Reduces polynomial `r` modulo `m` over **{Z}_2[X]**.
+    ## Defaults to `m = 0x11B` (**X^8 + X^4 + X^3 + X + 1**, the AES irreducible polynomial).
     ##
     ## runnableExamples:
     ##   import std/bitops
@@ -53,7 +53,7 @@ func polyModZ2*(r: uint, m: uint = 0x11B): uint {.inline.} =
     return r
 
 func gf28Mul*(a, b: uint, m: uint = 0x11B): uint {.inline.} =
-    ## Multiplies two elements `a` and `b` in the finite field $GF(2^8)$
+    ## Multiplies two elements `a` and `b` in the finite field **GF(2^8)**
     ## modulo the irreducible polynomial `m` (0x11B by default for AES).
     ##
     ## runnableExamples:
