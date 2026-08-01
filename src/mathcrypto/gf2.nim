@@ -22,11 +22,11 @@ func polyMulZ2*(a, b: uint): uint {.inline.} =
     ## Polynomials are represented as integers where bit `i`
     ## corresponds to the coefficient of **X^i**.
     ##
-    ## runnableExamples:
+    ## runnableExamples: \
     ##   # (X² + X + 1) * (X + 1) = X³ + 1
     ##   doAssert polyMulZ2(7, 3) == 9
     ##
-    ##   # (X² + 1) * (X² + 1) = X⁴ + 1  (since 2X² = 0 mod 2)
+    ##   # `(X² + 1) * (X² + 1) = X⁴ + 1  (since 2X² = 0 mod 2)`
     ##   doAssert polyMulZ2(5, 5) == 17
     var a = a
     var b = b
