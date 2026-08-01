@@ -38,6 +38,7 @@ mathcrypto/
 ├── tests/
 │   ├── t_aes.nim             # Unit tests for AES primitives
 │   ├── t_euclidean.nim       # Unit tests for Extended GCD and mod inverse
+│   ├── t_gf2.nim             # Unit tests for Polynomial Arithmetic
 │   ├── t_jacobi.nim          # Unit tests for Jacobi symbol
 │   └── t_primality.nim       # Unit tests for primality testing
 ├── LICENSE                   # MIT License
