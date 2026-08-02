@@ -7,3 +7,5 @@ nimble.paths
 # Generated Documentation
 htmldocs/
 src/htmldocs/
+nimble.develop
+nimbledeps

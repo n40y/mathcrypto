@@ -12,13 +12,15 @@ A lightweight, efficient, and dependency-free Nim library providing core mathema
 
 ## Features
 
-- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of $(a / n)$ using bitwise optimizations.
+- **Extended Euclidean Algorithm (`extendedGcd` & `modInverse`)**: Extended GCD returning Bezout coefficients and modular multiplicative inverse computation for 64-bit signed integers (`int64`).
+- **AES-128 Primitives (`aes`)**: Full implementation of AES-128 encryption and decryption blocks (`encryptBlock`, `decryptBlock`), key schedule expansion (`expandKey`), and individual state transformations (`subBytes`, `shiftRows`, `mixColumns`, etc.).
+- **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in _GF(2⁸)_ / AES (`gf28Mul`).
+- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of _(a / n)_ using bitwise optimizations.
 - **Miller-Rabin Primality Test (`isPrimeMillerRabin`)**: **Deterministic** primality verification for all 64-bit integers (`uint64`) using known minimal deterministic bases.
 - **Solovay-Strassen Primality Test (`isPrimeSolovayStrassen`)**: Probabilistic primality test based on Euler's criterion and the Jacobi symbol.
-- **Modular Exponentiation (`powerMod`)**: Efficient $O(\log e)$ modular exponentiation for 64-bit unsigned integers.
-- **Zero External Dependencies**: Pure Nim stdlib implementation (`std/random`, `std/unittest`).
-- **Nimble Ready**: Fully compliant with Nimble package layout standards.
-
+- **Modular Exponentiation (`powerMod`)**: Efficient _O(log e)_ modular exponentiation for 64-bit unsigned integers.
+- **Zero External Dependencies**: Pure Nim stdlib implementation (`std/bitops`, `std/random`).
+- **Nimble Ready**: Fully compliant with Nimble package layout standards and automated doctests (`runnableExamples`).
 ---
 
 ## Project Structure
@@ -28,9 +30,15 @@ mathcrypto/
 ├── src/
 │   ├── mathcrypto.nim        # Main export module
 │   └── mathcrypto/
+│       ├── aes.nim           # AES-128 encryption/decryption primitives & key schedule
+│       ├── euclidean.nim     # Extended Euclidean Algorithm & Modular Inverse
+│       ├── gf2.nim           # Polynomial arithmetic over Z₂[X] & GF(2⁸)
 │       ├── jacobi.nim        # Jacobi symbol algorithm
 │       └── primality.nim     # PowerMod, Miller-Rabin, & Solovay-Strassen
 ├── tests/
+│   ├── t_aes.nim             # Unit tests for AES primitives
+│   ├── t_euclidean.nim       # Unit tests for Extended GCD and mod inverse
+│   ├── t_gf2.nim             # Unit tests for Polynomial Arithmetic
 │   ├── t_jacobi.nim          # Unit tests for Jacobi symbol
 │   └── t_primality.nim       # Unit tests for primality testing
 ├── LICENSE                   # MIT License
@@ -59,58 +67,113 @@ cd mathcrypto
 nimble develop
 ```
 
+
 ## Usage
 
-Import *mathcrypto* to access all cryptographic and mathematical procedures in your project:
+Import *_mathcrypto_* to access all cryptographic and mathematical procedures in your project:
 
 ```python
 import mathcrypto
+import std/strutils
 
-# 1. Compute Jacobi Symbol (a / n)
+# 1. Extended GCD & Modular Inverse
+let (g, x, y) = extendedGcd(240'i64, 46'i64) # Returns (2, -9, 47)
+let inv       = modInverse(3'i64, 11'i64)    # Returns 4
+
+echo "gcd(240, 46) = ", g, " = 240*(", x, ") + 46*(", y, ")"
+echo "3^-1 mod 11 = ", inv
+
+# 2. AES-128 Encryption & Decryption
+let key: Key128 = [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+let expKey      = expandKey(key)
+let pt: array[16, byte] = [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+let ct      = encryptBlock(pt, expKey)
+let decrypted = decryptBlock(ct, expKey)
+
+assert decrypted == pt
+echo "AES Ciphertext: ", ct.toHex
+
+# 3. Compute Jacobi Symbol (a / n)
 let j1 = jacobi_symbol(2, 7)    # Returns  1 (2 is a quadratic residue mod 7)
 let j2 = jacobi_symbol(7, 11)   # Returns -1 (7 is a quadratic non-residue mod 11)
-let j3 = jacobi_symbol(10, 15)  # Returns  0 (gcd(10, 15) > 1)
 
 echo "Jacobi (2/7): ", j1
 
-# 2. Primality Testing with Miller-Rabin (Deterministic for uint64)
+# 4. Primality Testing (Miller-Rabin)
 let p1 = isPrimeMillerRabin(104729'u64) # 10,000th prime -> true
 let p2 = isPrimeMillerRabin(561'u64)    # Carmichael number -> false
 
 echo "Is 104729 prime? ", p1
-echo "Is 561 prime? ", p2
 
-# 3. Probabilistic Primality Testing with Solovay-Strassen
-let p3 = isPrimeSolovayStrassen(104729, k = 20) # Returns true
-echo "Solovay-Strassen (104729): ", p3
+# 5. Binary Polynomials & GF(2⁸) Arithmetic
+let prod = polyMulZ2(7, 3)     # (X² + X + 1) * (X + 1) = X³ + 1 -> 9
+let gf   = gf28Mul(0x57, 0x83) # AES multiplication -> 0xC1
+
+echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 ```
 
 
 ## API Reference
 
-*mathcrypto/jacobi*
-**proc jacobi_symbol*(a: int, n: int): int**
-Calculates the Jacobi symbol $(a / n)$.
+# **_mathcrypto/euclidean_**
 
-* Precondition: *n* must be a positive odd integer ($n > 0$, $n \equiv 1 \pmod 2$).
+_proc extendedGcd*(a, b: int64): (int64, int64, int64)_ \
+Computes the Extended Euclidean Algorithm for **a** and **b**. Returns **(gcd, x, y)** such that **a * x + b * y = gcd(a, b)**.
 
-* Returns: *1*, *-1*, or *0*.
-
-* Raises: *ValueError* if *n* is even or non-positive.
+_proc modInverse*(a, m: int64): int64_ \
+Computes the modular multiplicative inverse of **a** modulo **m** ( a^{-1} (mod m) ). Raises **ValueError** if _gcd(a, m) != 1_.
 
 
-*mathcrypto/primality*
-**proc powerMod*(base, exp, m: uint64): uint64**
-Computes $(base^{exp}) \pmod m$ using binary exponentiation.
+# **_mathcrypto/aes_**
+
+_proc expandKey*(key: Key128): ExpandedKey_ \
+Expands a 128-bit key into 176 bytes required for AES-128 (11 round keys).
+
+_proc encryptBlock*(plaintext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]_ \
+Encrypts a single 16-byte block using AES-128.
+
+_proc decryptBlock*(ciphertext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]_ \
+Decrypts a single 16-byte block using AES-128.
 
 
-**proc isPrimeMillerRabin*(n: uint64): bool**
-Determines if *n* is prime using the Miller-Rabin algorithm.
+# **_mathcrypto/jacobi_**
 
-* Deterministic for all *uint64* values by testing against bases *[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]*.
+_proc jacobi_symbol*(a: int, n: int): int_ \
+Calculates the Jacobi symbol **_(a / n)_**.
 
-**proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool**
-Determines if *n* is prime using $k$ iterations of the Solovay-Strassen probabilistic test.
+* Precondition: **n** must be a positive odd integer (**n > 0**, **n = 1 (mod 2)**).
+
+* Returns: **1**, **-1**, or **0**.
+
+* Raises: *ValueError* if **n** is even or non-positive.
+
+
+# **_mathcrypto/primality_**
+
+_proc powerMod*(base, exp, m: uint64): uint64_ \
+Computes **(base^{exp}) (mod m)** using binary exponentiation.
+
+
+_proc isPrimeMillerRabin*(n: uint64): bool_ \
+Determines if **n** is prime using the Miller-Rabin algorithm.
+
+* Deterministic for all **uint64** values by testing against bases **_[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_**.
+
+_proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_ \
+Determines if **n** is prime using **k** iterations of the Solovay-Strassen probabilistic test.
+
+
+# **_mathcrypto/gf2_**
+
+_func polyMulZ2(a, b: uint): uint*_ \
+Multiplies two polynomials **A(X)** and **B(X)** over **Z₂[X]**.
+
+_func polyModZ2(r: uint, m: uint = 0x11B): uint*_ \
+Reduces polynomial **r** modulo **m** over **Z₂[X]** (defaults to **0x11B**, the AES irreducible polynomial).
+
+_func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_ \
+Multiplies two elements in the finite field **(2⁸)** modulo the irreducible polynomial **m**.
 
 
 ## Running Tests
@@ -120,13 +183,9 @@ Execute the full suite of unit tests using Nimble:
 nimble test
 ```
 
-All test files located under *tests/* (*t_jacobi.nim*, *t_primality.nim*) will be automatically compiled and executed.
+All test files located under *_tests/_* (*_t_jacobi.nim_*, *_t_primality.nim_*) will be automatically compiled and executed.
 
 
 ## License
 
-<<<<<<< HEAD
 This project is licensed under the MIT License. See the LICENSE file for details.
-=======
-This project is licensed under the MIT License. See the LICENSE file for details.
->>>>>>> af6dd18 (Add runnableExamples and htmldocs exclusion)

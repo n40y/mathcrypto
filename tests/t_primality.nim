@@ -1,4 +1,4 @@
-## src/mathcrypto/primality.nim
+# src/mathcrypto/primality.nim
 
 import std/unittest
 import std/random

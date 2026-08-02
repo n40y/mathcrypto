@@ -1,4 +1,4 @@
-## tests/t_jacobi.nim
+# tests/t_jacobi.nim
 
 import std/unittest
 import mathcrypto/jacobi
