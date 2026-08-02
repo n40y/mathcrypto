@@ -3,9 +3,9 @@
 import ./gf2
 
 type
-    State* = array[4, array[4, byte]]
-    Key128* = array[16, byte]
-    ExpandedKey* = array[176, byte]
+  State* = array[4, array[4, byte]]
+  Key128* = array[16, byte]
+  ExpandedKey* = array[176, byte]
 
 # =====================================================================
 # S-Box & Inverse S-Box
@@ -59,25 +59,25 @@ const RCON*: array[11, byte] = [
 # =====================================================================
 
 proc bytesToState*(data: array[16, byte]): State =
-    ## Converts a 16-byte flat array into a 4x4 column-major AES State matrix.
-    ##
-    runnableExamples:
-        let bytes: array[16, byte] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        let st = bytesToState(bytes)
-        assert st[0][0] == 0'u8 and st[1][0] == 1'u8 and st[0][1] == 4'u8
-    
-    for i in 0 .. 15:
-        result[i mod 4][i div 4] = data[i]
+  ## Converts a 16-byte flat array into a 4x4 column-major AES State matrix.
+  ##
+  runnableExamples:
+    let bytes: array[16, byte] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    let st = bytesToState(bytes)
+    assert st[0][0] == 0'u8 and st[1][0] == 1'u8 and st[0][1] == 4'u8
+
+  for i in 0 .. 15:
+    result[i mod 4][i div 4] = data[i]
 
 proc stateToBytes*(state: State): array[16, byte] =
-    ## Converts a 4x4 column-major AES State matrix back into a 16-byte flat array.
-    ##
-    runnableExamples:
-        let bytes: array[16, byte] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        assert stateToBytes(bytesToState(bytes)) == bytes
-  
-    for i in 0 .. 15:
-        result[i] = state[i mod 4][i div 4]
+  ## Converts a 4x4 column-major AES State matrix back into a 16-byte flat array.
+  ##
+  runnableExamples:
+    let bytes: array[16, byte] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    assert stateToBytes(bytesToState(bytes)) == bytes
+
+  for i in 0 .. 15:
+    result[i] = state[i mod 4][i div 4]
 
 
 # =====================================================================
@@ -85,65 +85,69 @@ proc stateToBytes*(state: State): array[16, byte] =
 # =====================================================================
 
 proc addRoundKey*(state: var State, roundKey: array[16, byte]) =
-    ## Applies the AddRoundKey step by XORing the state matrix with the round key.
-    let keyState = bytesToState(roundKey)
-    for r in 0 .. 3:
-        for c in 0 .. 3:
-            state[r][c] = state[r][c] xor keyState[r][c]
+  ## Applies the AddRoundKey step by XORing the state matrix with the round key.
+  let keyState = bytesToState(roundKey)
+  for r in 0 .. 3:
+    for c in 0 .. 3:
+      state[r][c] = state[r][c] xor keyState[r][c]
 
 proc subBytes*(state: var State) =
-    ## Applies the SubBytes transformation using the AES S-Box.
-    for r in 0 .. 3:
-        for c in 0 .. 3:
-            state[r][c] = SBOX[state[r][c]]
+  ## Applies the SubBytes transformation using the AES S-Box.
+  for r in 0 .. 3:
+    for c in 0 .. 3:
+      state[r][c] = SBOX[state[r][c]]
 
 proc invSubBytes*(state: var State) =
-    ## Applies the inverse SubBytes transformation using the Inverse S-Box.
-    for r in 0 .. 3:
-        for c in 0 .. 3:
-            state[r][c] = INV_SBOX[state[r][c]]
+  ## Applies the inverse SubBytes transformation using the Inverse S-Box.
+  for r in 0 .. 3:
+    for c in 0 .. 3:
+      state[r][c] = INV_SBOX[state[r][c]]
 
 proc shiftRows*(state: var State) =
-    ## Performs the ShiftRows step, cyclically shifting rows to the left.
-    var temp: State = state
-    for r in 1 .. 3:
-        for c in 0 .. 3:
-            state[r][c] = temp[r][(c + r) mod 4]
+  ## Performs the ShiftRows step, cyclically shifting rows to the left.
+  var temp: State = state
+  for r in 1 .. 3:
+    for c in 0 .. 3:
+      state[r][c] = temp[r][(c + r) mod 4]
 
 proc invShiftRows*(state: var State) =
-    ## Performs the inverse ShiftRows step, cyclically shifting rows to the right.
-    var temp: State = state
-    for r in 1 .. 3:
-        for c in 0 .. 3:
-            state[r][c] = temp[r][(c - r + 4) mod 4]
+  ## Performs the inverse ShiftRows step, cyclically shifting rows to the right.
+  var temp: State = state
+  for r in 1 .. 3:
+    for c in 0 .. 3:
+      state[r][c] = temp[r][(c - r + 4) mod 4]
 
 proc mixColumns*(state: var State) =
-    ## Applies the MixColumns transformation using matrix multiplication in GF(2⁸).
-    var temp = state
-    for c in 0 .. 3:
-        let r0 = temp[0][c]
-        let r1 = temp[1][c]
-        let r2 = temp[2][c]
-        let r3 = temp[3][c]
+  ## Applies the MixColumns transformation using matrix multiplication in GF(2⁸).
+  var temp = state
+  for c in 0 .. 3:
+    let r0 = temp[0][c]
+    let r1 = temp[1][c]
+    let r2 = temp[2][c]
+    let r3 = temp[3][c]
 
-        state[0][c] = byte(gf28Mul(2, r0) xor gf28Mul(3, r1) xor r2 xor r3)
-        state[1][c] = byte(r0 xor gf28Mul(2, r1) xor gf28Mul(3, r2) xor r3)
-        state[2][c] = byte(r0 xor r1 xor gf28Mul(2, r2) xor gf28Mul(3, r3))
-        state[3][c] = byte(gf28Mul(3, r0) xor r1 xor r2 xor gf28Mul(2, r3))
+    state[0][c] = byte(gf28Mul(2, r0) xor gf28Mul(3, r1) xor r2 xor r3)
+    state[1][c] = byte(r0 xor gf28Mul(2, r1) xor gf28Mul(3, r2) xor r3)
+    state[2][c] = byte(r0 xor r1 xor gf28Mul(2, r2) xor gf28Mul(3, r3))
+    state[3][c] = byte(gf28Mul(3, r0) xor r1 xor r2 xor gf28Mul(2, r3))
 
 proc invMixColumns*(state: var State) =
-    ## Applies the inverse MixColumns transformation using inverse matrix multiplication in GF(2⁸).
-    var temp = state
-    for c in 0 .. 3:
-        let r0 = temp[0][c]
-        let r1 = temp[1][c]
-        let r2 = temp[2][c]
-        let r3 = temp[3][c]
+  ## Applies the inverse MixColumns transformation using inverse matrix multiplication in GF(2⁸).
+  var temp = state
+  for c in 0 .. 3:
+    let r0 = temp[0][c]
+    let r1 = temp[1][c]
+    let r2 = temp[2][c]
+    let r3 = temp[3][c]
 
-        state[0][c] = byte(gf28Mul(0x0e, r0) xor gf28Mul(0x0b, r1) xor gf28Mul(0x0d, r2) xor gf28Mul(0x09, r3))
-        state[1][c] = byte(gf28Mul(0x09, r0) xor gf28Mul(0x0e, r1) xor gf28Mul(0x0b, r2) xor gf28Mul(0x0d, r3))
-        state[2][c] = byte(gf28Mul(0x0d, r0) xor gf28Mul(0x09, r1) xor gf28Mul(0x0e, r2) xor gf28Mul(0x0b, r3))
-        state[3][c] = byte(gf28Mul(0x0b, r0) xor gf28Mul(0x0d, r1) xor gf28Mul(0x09, r2) xor gf28Mul(0x0e, r3))
+    state[0][c] = byte(gf28Mul(0x0e, r0) xor gf28Mul(0x0b, r1) xor gf28Mul(0x0d, r2) xor gf28Mul(
+        0x09, r3))
+    state[1][c] = byte(gf28Mul(0x09, r0) xor gf28Mul(0x0e, r1) xor gf28Mul(0x0b, r2) xor gf28Mul(
+        0x0d, r3))
+    state[2][c] = byte(gf28Mul(0x0d, r0) xor gf28Mul(0x09, r1) xor gf28Mul(0x0e, r2) xor gf28Mul(
+        0x0b, r3))
+    state[3][c] = byte(gf28Mul(0x0b, r0) xor gf28Mul(0x0d, r1) xor gf28Mul(0x09, r2) xor gf28Mul(
+        0x0e, r3))
 
 
 # =====================================================================
@@ -151,34 +155,34 @@ proc invMixColumns*(state: var State) =
 # =====================================================================
 
 proc expandKey*(key: Key128): ExpandedKey =
-    ## Expands a 128-bit key into 176 bytes required for AES-128 (11 round keys).
-    for i in 0 .. 15:
-        result[i] = key[i]
+  ## Expands a 128-bit key into 176 bytes required for AES-128 (11 round keys).
+  for i in 0 .. 15:
+    result[i] = key[i]
 
-    var bytesGenerated = 16
-    var rconIdx = 1
+  var bytesGenerated = 16
+  var rconIdx = 1
 
-    while bytesGenerated < 176:
-        var temp: array[4, byte]
-        for i in 0 .. 3:
-            temp[i] = result[bytesGenerated - 4 + i]
+  while bytesGenerated < 176:
+    var temp: array[4, byte]
+    for i in 0 .. 3:
+      temp[i] = result[bytesGenerated - 4 + i]
 
-        if bytesGenerated mod 16 == 0:
-            let k0 = temp[0]
-            temp[0] = temp[1]
-            temp[1] = temp[2]
-            temp[2] = temp[3]
-            temp[3] = k0
+    if bytesGenerated mod 16 == 0:
+      let k0 = temp[0]
+      temp[0] = temp[1]
+      temp[1] = temp[2]
+      temp[2] = temp[3]
+      temp[3] = k0
 
-            for i in 0 .. 3:
-                temp[i] = SBOX[temp[i]]
+      for i in 0 .. 3:
+        temp[i] = SBOX[temp[i]]
 
-            temp[0] = temp[0] xor RCON[rconIdx]
-            inc rconIdx
+      temp[0] = temp[0] xor RCON[rconIdx]
+      inc rconIdx
 
-        for i in 0 .. 3:
-            result[bytesGenerated] = result[bytesGenerated - 16] xor temp[i]
-            inc bytesGenerated
+    for i in 0 .. 3:
+      result[bytesGenerated] = result[bytesGenerated - 16] xor temp[i]
+      inc bytesGenerated
 
 
 # =====================================================================
@@ -186,73 +190,75 @@ proc expandKey*(key: Key128): ExpandedKey =
 # =====================================================================
 
 proc encryptBlock*(plaintext: array[16, byte], expandedKey: ExpandedKey): array[16, byte] =
-    ## Encrypts a single 16-byte block using AES-128.
-    ##
-    runnableExamples:
-        let key: Key128 = [0'u8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        let expKey = expandKey(key)
-        let pt: array[16, byte] = [0'u8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        let ct = encryptBlock(pt, expKey)
-        assert ct == [0x66'u8, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c, 0xfa, 0x59, 0xca, 0x34, 0x2b, 0x2e]
-    
-    var state = bytesToState(plaintext)
-    var initialKey: array[16, byte]
-    for i in 0 .. 15:
-        initialKey[i] = expandedKey[i]
+  ## Encrypts a single 16-byte block using AES-128.
+  ##
+  runnableExamples:
+    let key: Key128 = [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let expKey = expandKey(key)
+    let pt: array[16, byte] = [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let ct = encryptBlock(pt, expKey)
+    assert ct == [0x66'u8, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c, 0xfa, 0x59, 0xca,
+        0x34, 0x2b, 0x2e]
 
-    addRoundKey(state, initialKey)
+  var state = bytesToState(plaintext)
+  var initialKey: array[16, byte]
+  for i in 0 .. 15:
+    initialKey[i] = expandedKey[i]
 
-    for round in 1 .. 9:
-        subBytes(state)
-        shiftRows(state)
-        mixColumns(state)
-        var roundKey: array[16, byte]
-        for i in 0 .. 15:
-            roundKey[i] = expandedKey[round * 16 + i]
-        addRoundKey(state, roundKey)
+  addRoundKey(state, initialKey)
 
+  for round in 1 .. 9:
     subBytes(state)
     shiftRows(state)
-    var finalKey: array[16, byte]
+    mixColumns(state)
+    var roundKey: array[16, byte]
     for i in 0 .. 15:
-        finalKey[i] = expandedKey[160 + i]
-    addRoundKey(state, finalKey)
+      roundKey[i] = expandedKey[round * 16 + i]
+    addRoundKey(state, roundKey)
 
-    return stateToBytes(state)
+  subBytes(state)
+  shiftRows(state)
+  var finalKey: array[16, byte]
+  for i in 0 .. 15:
+    finalKey[i] = expandedKey[160 + i]
+  addRoundKey(state, finalKey)
+
+  return stateToBytes(state)
 
 
 proc decryptBlock*(ciphertext: array[16, byte], expandedKey: ExpandedKey): array[16, byte] =
-    ## Decrypts a single 16-byte block using AES-128.
-    ##
-    runnableExamples:
-        let key: Key128 = [0'u8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        let expKey = expandKey(key)
-        let ct: array[16, byte] = [0x66'u8, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c, 0xfa, 0x59, 0xca, 0x34, 0x2b, 0x2e]
-        let pt = decryptBlock(ct, expKey)
-        assert pt == [0'u8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  
-    var state = bytesToState(ciphertext)
-    var finalKey: array[16, byte]
-    for i in 0 .. 15:
-        finalKey[i] = expandedKey[160 + i]
+  ## Decrypts a single 16-byte block using AES-128.
+  ##
+  runnableExamples:
+    let key: Key128 = [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let expKey = expandKey(key)
+    let ct: array[16, byte] = [0x66'u8, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c, 0xfa,
+        0x59, 0xca, 0x34, 0x2b, 0x2e]
+    let pt = decryptBlock(ct, expKey)
+    assert pt == [0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    addRoundKey(state, finalKey)
+  var state = bytesToState(ciphertext)
+  var finalKey: array[16, byte]
+  for i in 0 .. 15:
+    finalKey[i] = expandedKey[160 + i]
 
-    for round in countdown(9, 1):
-        invShiftRows(state)
-        invSubBytes(state)
-        var roundKey: array[16, byte]
-        for i in 0 .. 15:
-            roundKey[i] = expandedKey[round * 16 + i]
-        addRoundKey(state, roundKey)
-        invMixColumns(state)
+  addRoundKey(state, finalKey)
 
+  for round in countdown(9, 1):
     invShiftRows(state)
     invSubBytes(state)
-    var initialKey: array[16, byte]
+    var roundKey: array[16, byte]
     for i in 0 .. 15:
-        initialKey[i] = expandedKey[i]
-    
-    addRoundKey(state, initialKey)
-    
-    return stateToBytes(state)
+      roundKey[i] = expandedKey[round * 16 + i]
+    addRoundKey(state, roundKey)
+    invMixColumns(state)
+
+  invShiftRows(state)
+  invSubBytes(state)
+  var initialKey: array[16, byte]
+  for i in 0 .. 15:
+    initialKey[i] = expandedKey[i]
+
+  addRoundKey(state, initialKey)
+
+  return stateToBytes(state)
