@@ -1,6 +1,6 @@
 # src/mathcrypto/jacobi.nim
 
-proc jacobi_symbol*(a: int, n: int): int =
+proc jacobiSymbol*(a: int, n: int): int =
   ## Calculates the Jacobi symbol `(a / n)`.
   ##
   ## `n` must be a positive odd integer (`n > 0` and `n mod 2 != 0`).
@@ -11,9 +11,9 @@ proc jacobi_symbol*(a: int, n: int): int =
   ## - `0` if `gcd(a, n) > 1`
   ##
   runnableExamples:
-    assert jacobi_symbol(2, 7) == 1
-    assert jacobi_symbol(7, 11) == -1
-    assert jacobi_symbol(10, 15) == 0
+    assert jacobiSymbol(2, 7) == 1
+    assert jacobiSymbol(7, 11) == -1
+    assert jacobiSymbol(10, 15) == 0
   
   if n <= 0 or n mod 2 == 0:
     raise newException(ValueError, "n must be a positive odd integer")
