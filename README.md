@@ -72,7 +72,7 @@ nimble develop
 
 Import *_mathcrypto_* to access all cryptographic and mathematical procedures in your project:
 
-```python
+```nim
 import mathcrypto
 import std/[strutils, sequtils]
 
