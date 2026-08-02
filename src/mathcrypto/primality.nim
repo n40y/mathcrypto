@@ -1,4 +1,4 @@
-# src/mathcrypto/primality.nim
+## src/mathcrypto/primality.nim
 
 import std/random
 import ./jacobi
@@ -75,7 +75,7 @@ proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool =
 
     for _ in 0 ..< k:
       let a = rand(2 .. n - 1)
-      let x = jacobi_symbol(a, n)
+      let x = jacobiSymbol(a, n)
       if x == 0:
         return false
 
