@@ -15,7 +15,7 @@ A lightweight, efficient, and dependency-free Nim library providing core mathema
 - **Extended Euclidean Algorithm (`extendedGcd` & `modInverse`)**: Extended GCD returning Bezout coefficients and modular multiplicative inverse computation for 64-bit signed integers (`int64`).
 - **AES-128 Primitives (`aes`)**: Full implementation of AES-128 encryption and decryption blocks (`encryptBlock`, `decryptBlock`), key schedule expansion (`expandKey`), and individual state transformations (`subBytes`, `shiftRows`, `mixColumns`, etc.).
 - **Galois Field & Polynomial Arithmetic (`gf2`)**: Binary polynomial multiplication (`polyMulZ2`), modular reduction (`polyModZ2`), and multiplication in _GF(2⁸)_ / AES (`gf28Mul`).
-- **Jacobi Symbol (`jacobi_symbol`)**: Fast computation of _(a / n)_ using bitwise optimizations.
+- **Jacobi Symbol (`jacobiSymbol`)**: Fast computation of _(a / n)_ using bitwise optimizations.
 - **Miller-Rabin Primality Test (`isPrimeMillerRabin`)**: **Deterministic** primality verification for all 64-bit integers (`uint64`) using known minimal deterministic bases.
 - **Solovay-Strassen Primality Test (`isPrimeSolovayStrassen`)**: Probabilistic primality test based on Euler's criterion and the Jacobi symbol.
 - **Modular Exponentiation (`powerMod`)**: Efficient _O(log e)_ modular exponentiation for 64-bit unsigned integers.
@@ -95,8 +95,8 @@ assert decrypted == pt
 echo "AES Ciphertext: ", ct.toHex
 
 # 3. Compute Jacobi Symbol (a / n)
-let j1 = jacobi_symbol(2, 7)    # Returns  1 (2 is a quadratic residue mod 7)
-let j2 = jacobi_symbol(7, 11)   # Returns -1 (7 is a quadratic non-residue mod 11)
+let j1 = jacobiSymbol(2, 7)    # Returns  1 (2 is a quadratic residue mod 7)
+let j2 = jacobiSymbol(7, 11)   # Returns -1 (7 is a quadratic non-residue mod 11)
 
 echo "Jacobi (2/7): ", j1
 
@@ -139,7 +139,7 @@ Decrypts a single 16-byte block using AES-128.
 
 # **_mathcrypto/jacobi_**
 
-_proc jacobi_symbol*(a: int, n: int): int_ \
+_proc jacobiSymbol*(a: int, n: int): int_ \
 Calculates the Jacobi symbol **_(a / n)_**.
 
 * Precondition: **n** must be a positive odd integer (**n > 0**, **n = 1 (mod 2)**).
