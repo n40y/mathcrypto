@@ -116,64 +116,81 @@ echo "GF(2^8) 0x57 * 0x83 = 0x", gf.toHex
 
 ## API Reference
 
-# **_mathcrypto/euclidean_**
+### `mathcrypto/euclidean`
 
-_proc extendedGcd*(a, b: int64): (int64, int64, int64)_ \
-Computes the Extended Euclidean Algorithm for **a** and **b**. Returns **(gcd, x, y)** such that **a * x + b * y = gcd(a, b)**.
+```nim
+proc extendedGcd*(a, b: int64): (int64, int64, int64)
+```
+Computes the Extended Euclidean Algorithm for `a` and `b`. Returns `(gcd, x, y)` such that `a * x + b * y = gcd(a, b)`.
 
-_proc modInverse*(a, m: int64): int64_ \
-Computes the modular multiplicative inverse of **a** modulo **m** ( a^{-1} (mod m) ). Raises **ValueError** if _gcd(a, m) != 1_.
+```nim
+proc modInverse*(a, m: int64): int64
+```
+Computes the modular multiplicative inverse of `a` modulo `m`. Raises `ValueError` if `gcd(a, m) != 1`.
 
+### `mathcrypto/aes`
 
-# **_mathcrypto/aes_**
-
-_proc expandKey*(key: Key128): ExpandedKey_ \
+```nim
+proc expandKey*(key: Key128): ExpandedKey
+```
 Expands a 128-bit key into 176 bytes required for AES-128 (11 round keys).
 
-_proc encryptBlock*(plaintext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]_ \
+```nim
+proc encryptBlock*(plaintext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]
+```
 Encrypts a single 16-byte block using AES-128.
 
-_proc decryptBlock*(ciphertext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]_ \
+```nim
+proc decryptBlock*(ciphertext: array[16, byte], expandedKey: ExpandedKey): array[16, byte]
+```
 Decrypts a single 16-byte block using AES-128.
 
+### `mathcrypto/jacobi`
 
-# **_mathcrypto/jacobi_**
+```nim
+proc jacobiSymbol*(a: int, n: int): int
+```
+Calculates the Jacobi symbol `(a / n)`.
 
-_proc jacobiSymbol*(a: int, n: int): int_ \
-Calculates the Jacobi symbol **_(a / n)_**.
+- Precondition: `n` must be a positive odd integer (`n > 0`, `n mod 2 == 1`).
+- Returns: `1`, `-1`, or `0`.
+- Raises: `ValueError` if `n` is even or non-positive.
 
-* Precondition: **n** must be a positive odd integer (**n > 0**, **n = 1 (mod 2)**).
+### `mathcrypto/primality`
 
-* Returns: **1**, **-1**, or **0**.
+```nim
+proc powerMod*(base, exp, m: uint64): uint64
+```
+Computes `(base ^ exp) mod m` using binary exponentiation.
 
-* Raises: *ValueError* if **n** is even or non-positive.
+```nim
+proc isPrimeMillerRabin*(n: uint64): bool
+```
+Determines if `n` is prime using the Miller-Rabin algorithm.
 
+- Deterministic for all `uint64` values, tested against bases `[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]`.
 
-# **_mathcrypto/primality_**
+```nim
+proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool
+```
+Determines if `n` is prime using `k` iterations of the Solovay-Strassen probabilistic test.
 
-_proc powerMod*(base, exp, m: uint64): uint64_ \
-Computes **(base^{exp}) (mod m)** using binary exponentiation.
+### `mathcrypto/gf2`
 
+```nim
+func polyMulZ2*(a, b: uint): uint
+```
+Multiplies two polynomials `A(X)` and `B(X)` over `Z₂[X]`.
 
-_proc isPrimeMillerRabin*(n: uint64): bool_ \
-Determines if **n** is prime using the Miller-Rabin algorithm.
+```nim
+func polyModZ2*(r: uint, m: uint = 0x11B): uint
+```
+Reduces polynomial `r` modulo `m` over `Z₂[X]` (defaults to `0x11B`, the AES irreducible polynomial).
 
-* Deterministic for all **uint64** values by testing against bases **_[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]_**.
-
-_proc isPrimeSolovayStrassen*(n: int, k: int = 20): bool_ \
-Determines if **n** is prime using **k** iterations of the Solovay-Strassen probabilistic test.
-
-
-# **_mathcrypto/gf2_**
-
-_func polyMulZ2(a, b: uint): uint*_ \
-Multiplies two polynomials **A(X)** and **B(X)** over **Z₂[X]**.
-
-_func polyModZ2(r: uint, m: uint = 0x11B): uint*_ \
-Reduces polynomial **r** modulo **m** over **Z₂[X]** (defaults to **0x11B**, the AES irreducible polynomial).
-
-_func gf28Mul(a, b: uint, m: uint = 0x11B): uint*_ \
-Multiplies two elements in the finite field **(2⁸)** modulo the irreducible polynomial **m**.
+```nim
+func gf28Mul*(a, b: uint, m: uint = 0x11B): uint
+```
+Multiplies two elements in the finite field `GF(2⁸)` modulo the irreducible polynomial `m`.
 
 
 ## Running Tests
@@ -183,7 +200,7 @@ Execute the full suite of unit tests using Nimble:
 nimble test
 ```
 
-All test files located under *_tests/_* (*_t_jacobi.nim_*, *_t_primality.nim_*) will be automatically compiled and executed.
+All test files located under *_tests/_* (*_t_aes.nim_*, *_t_euclidean.nim_*, *_t_gf2.nim_*, *_t_jacobi.nim_*, *_t_primality.nim_*) will be automatically compiled and executed.
 
 
 ## License
