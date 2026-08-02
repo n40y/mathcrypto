@@ -74,7 +74,7 @@ Import *_mathcrypto_* to access all cryptographic and mathematical procedures in
 
 ```python
 import mathcrypto
-import std/strutils
+import std/[strutils, sequtils]
 
 # 1. Extended GCD & Modular Inverse
 let (g, x, y) = extendedGcd(240'i64, 46'i64) # Returns (2, -9, 47)
@@ -92,7 +92,7 @@ let ct      = encryptBlock(pt, expKey)
 let decrypted = decryptBlock(ct, expKey)
 
 assert decrypted == pt
-echo "AES Ciphertext: ", ct.toHex
+echo "AES Ciphertext: ", ct.mapIt(it.toHex(2)).join()
 
 # 3. Compute Jacobi Symbol (a / n)
 let j1 = jacobiSymbol(2, 7)    # Returns  1 (2 is a quadratic residue mod 7)
